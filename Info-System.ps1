@@ -294,6 +294,7 @@ do {
         "0" {
             Write-Host ""
             Write-Host "  Encerrando..." -ForegroundColor DarkGray
+            exit
         }
         default {
             Write-Host "  Opcao invalida." -ForegroundColor Red
