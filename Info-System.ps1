@@ -103,10 +103,26 @@ function Get-InfoSO {
     }
 }
 
+function Get-TipoMemoria {
+    param([int]$Codigo)
+
+    # Tabela SMBIOSMemoryType (padrao DMTF). Cobre os codigos mais comuns;
+    # os demais caem no "Desconhecido (codigo N)".
+    switch ($Codigo) {
+        20 { "DDR" }
+        21 { "DDR2" }
+        24 { "DDR3" }
+        26 { "DDR4" }
+        34 { "DDR5" }
+        default { "Desconhecido (codigo $Codigo)" }
+    }
+}
+
 function Get-InfoMemoria {
     Get-CimInstance Win32_PhysicalMemory | ForEach-Object {
         [PSCustomObject]@{
             "Slot"       = $_.DeviceLocator
+            "Tipo"       = Get-TipoMemoria $_.SMBIOSMemoryType
             "Capac.(GB)" = ConvertTo-GB $_.Capacity
             "Vel.(MHz)"  = $_.Speed
             "Fabricante" = $_.Manufacturer
@@ -294,6 +310,7 @@ do {
         "0" {
             Write-Host ""
             Write-Host "  Encerrando..." -ForegroundColor DarkGray
+            Start-Sleep -Milliseconds 800
             exit
         }
         default {
